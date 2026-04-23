@@ -250,7 +250,7 @@
       function createNameTexture() {
         const c = document.createElement('canvas');
         const mobile = isMobileView();
-        const size = mobile ? 1536 : 2048;
+        const size = mobile ? 1024 : 2048;
         c.width = size;
         c.height = size;
         const ctx = c.getContext('2d');
@@ -276,20 +276,20 @@
         ctx.textBaseline = 'middle';
 
         // Large name
-        const mainFontSize = mobile ? 190 : 220;
-        const tmFontSize = mobile ? 118 : 140;
+        const mainFontSize = mobile ? 152 : 220;
+        const tmFontSize = mobile ? 94 : 140;
 
         ctx.font = `900 ${mainFontSize}px "Playfair Display", "Georgia", serif`;
         ctx.fillStyle = mobile ? 'rgba(205, 233, 255, 0.84)' : 'rgba(200, 230, 255, 0.9)';
         ctx.shadowColor = mobile ? 'rgba(100, 200, 255, 0.34)' : 'rgba(100, 200, 255, 0.5)';
-        ctx.shadowBlur = mobile ? 34 : 60;
+        ctx.shadowBlur = mobile ? 18 : 60;
         ctx.fillText('JEANNINE', size/2, size*0.35);
         ctx.fillText('ANJALI', size/2, size*0.52);
 
         ctx.font = `700 ${tmFontSize}px "Playfair Display", "Georgia", serif`;
         ctx.fillStyle = mobile ? 'rgba(138, 225, 208, 0.62)' : 'rgba(120, 220, 200, 0.7)';
         ctx.shadowColor = mobile ? 'rgba(100, 255, 200, 0.26)' : 'rgba(100, 255, 200, 0.4)';
-        ctx.shadowBlur = mobile ? 24 : 40;
+        ctx.shadowBlur = mobile ? 12 : 40;
         ctx.fillText('T . M', size/2, size*0.70);
 
         // Subtle accent lines
@@ -311,11 +311,15 @@
       const canvas = document.getElementById('canvas');
       const liquid = LiquidBackground(canvas);
 
+      function getBaseDisplacement() {
+        return isMobileView() ? 1.15 : 5;
+      }
+
       function applyLiquidSettings() {
         const mobile = isMobileView();
         liquid.liquidPlane.material.metalness = mobile ? 0.62 : 0.75;
         liquid.liquidPlane.material.roughness = mobile ? 0.38 : 0.25;
-        liquid.liquidPlane.uniforms.displacementScale.value = mobile ? 2.2 : 5;
+        liquid.liquidPlane.uniforms.displacementScale.value = getBaseDisplacement();
         liquid.setRain(false);
       }
 
@@ -332,6 +336,18 @@
 
       mobileQuery.addEventListener('change', refreshLiquidTexture);
 
+      let mobileScrollTimer;
+      window.addEventListener('scroll', () => {
+        if (!isMobileView()) {
+          return;
+        }
+        liquid.liquidPlane.uniforms.displacementScale.value = 0.65;
+        clearTimeout(mobileScrollTimer);
+        mobileScrollTimer = setTimeout(() => {
+          liquid.liquidPlane.uniforms.displacementScale.value = getBaseDisplacement();
+        }, 140);
+      }, { passive: true });
+
       // ── Scroll Reveal Animations ──
       const animSections = document.querySelectorAll('.anim-section');
       const observer = new IntersectionObserver((entries) => {
@@ -347,7 +363,7 @@
       const nav = document.getElementById('nav');
       window.addEventListener('scroll', () => {
         nav.classList.toggle('scrolled', window.scrollY > 60);
-      });
+      }, { passive: true });
 
       // ── Smooth scroll ──
       document.querySelectorAll('a[href^="#"]').forEach(a => {

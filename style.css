@@ -484,6 +484,42 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+  .page::before {
+    display: none;
+  }
+
+  .nav,
+  .hero-card,
+  .side-card,
+  .section-card,
+  .contact-section {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  }
+
+  .hero-card::before,
+  .section-card::before,
+  .side-card::before {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent 42%);
+  }
+
+  .anim-section,
+  .anim-section.visible,
+  .nav,
+  .button,
+  .nav-links a {
+    transition: none;
+  }
+
+  .anim-section,
+  .anim-section.visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 640px) {
   .page {
     width: min(100% - 18px, 1200px);
